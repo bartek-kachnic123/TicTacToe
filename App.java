@@ -4,7 +4,14 @@ import java.awt.*;
 
 public class App {
     public static void main(String[] args) {
-        new AppGUI();
+
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new AppGUI();
+            }
+        });
+        
         
     }
 }
@@ -22,6 +29,5 @@ class AppGUI extends JFrame {
         this.getContentPane().setBackground(new Color(120, 50, 250));
     }
 
-
-    
 }
+
