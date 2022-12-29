@@ -30,13 +30,8 @@ class AppGUI extends JFrame implements ActionListener {
         BOARD_SIZE = 3;
     }
     AppGUI() {
-
-        this.setTitle("TicTacToe");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setResizable(false);
-        this.setSize(400, 400);
-        this.getContentPane().setBackground(new Color(120, 50, 250));
-
+        initalize();
+        
         player = true;
         computer = false;
         actual_sign = player ? "O" : "X";
@@ -47,7 +42,13 @@ class AppGUI extends JFrame implements ActionListener {
         this.setVisible(true);
 
     }
-
+    void initalize()
+    {
+        this.setTitle("TicTacToe");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setResizable(false);
+        this.setSize(400, 400);
+    }
     void createBoard() {
 
         board = new JPanel();
