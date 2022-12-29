@@ -23,6 +23,9 @@ class AppGUI extends JFrame implements ActionListener {
     static final int BOARD_SIZE;
     JPanel board;
     JButton[][] buttons;
+    boolean player;
+    boolean computer;
+    String actual_sign;
     static {
         BOARD_SIZE = 3;
     }
@@ -33,6 +36,10 @@ class AppGUI extends JFrame implements ActionListener {
         this.setResizable(false);
         this.setSize(400, 400);
         this.getContentPane().setBackground(new Color(120, 50, 250));
+
+        player = true;
+        computer = false;
+        actual_sign = player ? "O" : "X";
         
 
         createBoard();
@@ -46,7 +53,7 @@ class AppGUI extends JFrame implements ActionListener {
         board = new JPanel();
         board.setLayout(new GridLayout(BOARD_SIZE, BOARD_SIZE));
         buttons = new JButton[BOARD_SIZE][BOARD_SIZE];
-
+        
         for (JButton[] row : buttons) {
             for (JButton button : row) {
                 button = new JButton();
@@ -57,14 +64,18 @@ class AppGUI extends JFrame implements ActionListener {
 
         this.add(board);
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         
         JButton button = (JButton) e.getSource();
-        button.setText("X");
+        
         button.setEnabled(false);
         button.setFocusable(false);
+
+        button.setFont(new Font("Arial", Font.BOLD, button.getHeight()));
+        button.setText(actual_sign);
+        
         
     }
 
