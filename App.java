@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.plaf.metal.MetalButtonUI;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,7 +29,7 @@ class AppGUI extends JFrame implements ActionListener {
     JButton endButton;
     JButton aboutButton;
     JPanel board;
-    JButton[] buttons;
+    BoardButton[] buttons;
     String actual_sign;
     int movesCounter;
     Computer computer;
@@ -35,10 +37,11 @@ class AppGUI extends JFrame implements ActionListener {
         BOARD_SIZE = 3;
     }
     AppGUI() {
+        super();
         initalize();
         
         actual_sign = "O";
-        computer = new Computer("X");
+        computer = new Computer("X", Color.BLUE);
         
         createMenu();
         createBoard();
@@ -93,10 +96,10 @@ class AppGUI extends JFrame implements ActionListener {
         board.setPreferredSize(new Dimension(500, 500));
 
         board.setLayout(new GridLayout(BOARD_SIZE, BOARD_SIZE));
-        buttons = new JButton[BOARD_SIZE*BOARD_SIZE];
+        buttons = new BoardButton[BOARD_SIZE*BOARD_SIZE];
         
         for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; ++i) {
-                buttons[i] = new JButton();
+                buttons[i] = new BoardButton();
                 buttons[i].addActionListener(this);
                 board.add(buttons[i]);
 
@@ -109,9 +112,9 @@ class AppGUI extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (gameOver()) return;
 
-        JButton button = (JButton) e.getSource();
+        BoardButton button = (BoardButton) e.getSource();
         
-        button.setEnabled(false);
+        button.setEnabled(false, Color.MAGENTA);
         button.setFocusable(false);
 
         button.setFont(new Font("Arial", Font.BOLD, button.getHeight()));
@@ -141,13 +144,15 @@ class AppGUI extends JFrame implements ActionListener {
 
 class Computer {
     String sign;
+    Color signColor;
 
-    public Computer(String sign) {
+    public Computer(String sign, Color signColor) {
         this.sign = sign;
+        this.signColor = signColor;
 
     }
 
-    void makeRandomMove(JButton[] buttons, int movesCounter) {
+    void makeRandomMove(BoardButton[] buttons, int movesCounter) {
         Random random = new Random();
         int randomNumber;
 
@@ -156,13 +161,32 @@ class Computer {
             if (movesCounter >= buttons.length) return;
         }while(!buttons[randomNumber].isEnabled());
 
-        buttons[randomNumber].setFont(new Font("Arial", Font.BOLD, buttons[randomNumber].getHeight()));
 
-        buttons[randomNumber].setText(sign);
-        buttons[randomNumber].setEnabled(false);
+        buttons[randomNumber].setEnabled(false, this.signColor);
         buttons[randomNumber].setFocusable(false);
+
+        buttons[randomNumber].setForeground(Color.BLUE);
+        buttons[randomNumber].setFont(new Font("Arial", Font.BOLD, buttons[randomNumber].getHeight()));
+        buttons[randomNumber].setText(sign);
 
     }
 
 
+}
+
+class BoardButton extends JButton {
+    
+    public BoardButton() {
+        super();
+    }
+    void setEnabled(boolean enabled, Color fontColor) {
+        super.setEnabled(enabled);
+        
+        this.setBackground(Color.WHITE);
+        this.setUI(new MetalButtonUI() {
+                    // override the disabled text color for the button UI
+                    protected Color getDisabledTextColor() {
+                        return fontColor;
+                    }});
+    }
 }
