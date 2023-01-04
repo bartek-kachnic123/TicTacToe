@@ -22,7 +22,7 @@ public class App {
 }
 
 
-class AppGUI extends JFrame implements ActionListener {
+class AppGUI extends JFrame  {
     static final int BOARD_SIZE;
     JPanel menu;
     JButton newGameButton;
@@ -100,31 +100,33 @@ class AppGUI extends JFrame implements ActionListener {
         
         for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; ++i) {
                 buttons[i] = new BoardButton();
-                buttons[i].addActionListener(this);
+                buttons[i].addActionListener(new BoardButtonListener());
                 board.add(buttons[i]);
 
         }
         
         this.add(board, BorderLayout.CENTER);
     }
-    
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (gameOver()) return;
+    private class BoardButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (gameOver()) return;
 
-        BoardButton button = (BoardButton) e.getSource();
+            BoardButton button = (BoardButton) e.getSource();
         
-        button.setEnabled(false, Color.MAGENTA);
-        button.setFocusable(false);
+            button.setEnabled(false, Color.MAGENTA);
+            button.setFocusable(false);
 
-        button.setFont(new Font("Arial", Font.BOLD, button.getHeight()));
-        button.setText(actual_sign);
-        ++movesCounter;
+            button.setFont(new Font("Arial", Font.BOLD, button.getHeight()));
+            button.setText(actual_sign);
+            ++movesCounter;
         
-        computer.makeRandomMove(buttons, movesCounter);
-        ++movesCounter;
+            computer.makeRandomMove(buttons, movesCounter);
+            ++movesCounter;
         
     }
+    }
+    
 
     public boolean gameOver() {
 
