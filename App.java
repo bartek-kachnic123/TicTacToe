@@ -29,10 +29,11 @@ class AppGUI extends JFrame  {
     JButton endButton;
     JButton aboutButton;
     JPanel board;
-    BoardButton[] buttons;
+    BoardButton[] boardButtons;
     String actual_sign;
     int movesCounter;
     Computer computer;
+    boolean gameOver;
     static {
         BOARD_SIZE = 3;
     }
@@ -59,6 +60,7 @@ class AppGUI extends JFrame  {
         this.setLayout(new BorderLayout());
 
         movesCounter = 0;
+        gameOver = false;
     }
     void createMenu() {
         menu = new JPanel();
@@ -96,12 +98,12 @@ class AppGUI extends JFrame  {
         board.setPreferredSize(new Dimension(500, 500));
 
         board.setLayout(new GridLayout(BOARD_SIZE, BOARD_SIZE));
-        buttons = new BoardButton[BOARD_SIZE*BOARD_SIZE];
+        boardButtons = new BoardButton[BOARD_SIZE*BOARD_SIZE];
         
         for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; ++i) {
-                buttons[i] = new BoardButton();
-                buttons[i].addActionListener(new BoardButtonListener());
-                board.add(buttons[i]);
+                boardButtons[i] = new BoardButton();
+                boardButtons[i].addActionListener(new BoardButtonListener());
+                board.add(boardButtons[i]);
 
         }
         
@@ -110,7 +112,7 @@ class AppGUI extends JFrame  {
     private class BoardButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (gameOver()) return;
+            if (gameOver) return;
 
             BoardButton button = (BoardButton) e.getSource();
         
@@ -120,21 +122,48 @@ class AppGUI extends JFrame  {
             button.setFont(new Font("Arial", Font.BOLD, button.getHeight()));
             button.setText(actual_sign);
             ++movesCounter;
-        
-            computer.makeRandomMove(buttons, movesCounter);
+            if (gameOver()) return;
+            computer.makeRandomMove(boardButtons, movesCounter);
             ++movesCounter;
-        
+
+            
+            if (gameOver()) return;
     }
     }
     
-
+    
     public boolean gameOver() {
 
-        if (movesCounter > buttons.length) return true;
+        if (checkWin()) {
+            this.gameOver = true;
+            return true;
+        }
 
+        if (movesCounter > boardButtons.length) {
+            this.gameOver = true;
+            return true;
+        }
+        
         return false;
     }
     public boolean checkWin() {
+        String XWINNER = "XXX";
+        String OWINNER = "OOO";
+        String checking = "";
+
+        // check rows
+        for (int i=0; i < BOARD_SIZE; i++) {
+            for (int j=0; j < BOARD_SIZE; j++) {
+                checking += this.boardButtons[j+i*BOARD_SIZE].getText();
+            }
+            if (checking.equals(XWINNER) || checking.equals(OWINNER)) {
+                for (int j=0; j< BOARD_SIZE; j++) {
+                    this.boardButtons[j+i*BOARD_SIZE].setBackground(Color.GREEN);
+                }
+                return true;
+            }
+            checking = "";
+        }
         return false;
     }
 
