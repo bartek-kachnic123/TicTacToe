@@ -72,7 +72,24 @@ class AppGUI extends JFrame  {
         newGameButton.setPreferredSize(new Dimension(200, 50));
         newGameButton.setText("Nowa gra");
         newGameButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        newGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                // reset buttons
+                for (int i=0; i < BOARD_SIZE*BOARD_SIZE; i++)
+                {
+                    boardButtons[i].setEnabled(true);
+                    boardButtons[i].setText(null);
+                    boardButtons[i].setBackground(null); // default color
+                }
 
+                // reset counter
+                movesCounter = 0;
+
+                // new game
+                gameOver = false;
+            }
+        });
         menu.add(newGameButton);
 
         aboutButton = new JButton();
