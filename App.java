@@ -28,6 +28,7 @@ class AppGUI extends JFrame  {
     JButton endButton;
     JButton aboutButton;
     ButtonGroup groupX_or_O;
+    ButtonGroup groupLevel;
     JPanel board;
     BoardButton[] boardButtons;
     String player_sign;
@@ -37,6 +38,7 @@ class AppGUI extends JFrame  {
     static {
         BOARD_SIZE = 3;
     }
+    
     AppGUI() {
         super();
         initalize();
@@ -49,7 +51,6 @@ class AppGUI extends JFrame  {
         createBoard();
 
         player_sign = groupX_or_O.getSelection().getActionCommand();
-        
         computer = new Computer(player_sign.equals("O") ? "X" : "O", Color.BLUE);
         
         this.pack();
@@ -149,6 +150,22 @@ class AppGUI extends JFrame  {
         menu.add(radioButtonO);
         menu.add(radioButtonX);
 
+        JLabel labelLevel = new JLabel("Choose level difficulty!");
+        menu.add(labelLevel);
+
+        JRadioButton radioLevelNormal = new JRadioButton("Normal");
+        radioLevelNormal.setActionCommand("Normal");
+        
+        JRadioButton radioLevelImpossible = new JRadioButton("Impossible");
+        radioLevelNormal.setActionCommand("Impossible");
+
+        groupLevel = new ButtonGroup();
+        groupLevel.add(radioLevelNormal);
+        groupLevel.add(radioLevelImpossible);
+        radioLevelNormal.setSelected(true);
+
+        menu.add(radioLevelNormal);
+        menu.add(radioLevelImpossible);
         this.add(menu, BorderLayout.WEST);
         
         
