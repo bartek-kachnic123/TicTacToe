@@ -226,6 +226,21 @@ class AppGUI extends JFrame  {
             }
             checking = "";
         }
+        
+        // check cols
+        for (int i=0; i < BOARD_SIZE; i++) {
+            for (int j=0; j < BOARD_SIZE; j++) {
+                checking += this.boardButtons[i + j*BOARD_SIZE].getText();
+            }
+
+            if (checking.equals(XWINNER) || checking.equals(OWINNER)) {
+                for (int j=0; j< BOARD_SIZE; j++) {
+                    this.boardButtons[i+j*BOARD_SIZE].setBackground(Color.GREEN);
+                }
+                return true;
+            }
+            checking = "";
+        }
         return false;
     }
 
