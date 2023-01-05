@@ -30,7 +30,7 @@ class AppGUI extends JFrame  {
     ButtonGroup groupX_or_O;
     JPanel board;
     BoardButton[] boardButtons;
-    String actual_sign;
+    String player_sign;
     int movesCounter;
     Computer computer;
     boolean gameOver;
@@ -48,9 +48,9 @@ class AppGUI extends JFrame  {
         createMenu();
         createBoard();
 
-        actual_sign = groupX_or_O.getSelection().getActionCommand();
+        player_sign = groupX_or_O.getSelection().getActionCommand();
         
-        computer = new Computer(actual_sign.equals("O") ? "X" : "O", Color.BLUE);
+        computer = new Computer(player_sign.equals("O") ? "X" : "O", Color.BLUE);
         
         this.pack();
         this.setVisible(true);
@@ -95,8 +95,13 @@ class AppGUI extends JFrame  {
                 gameOver = false;
 
                 // set sign X or O
-                actual_sign = groupX_or_O.getSelection().getActionCommand();
-                computer.setSign(actual_sign.equals("O") ? "X":"O");
+                player_sign = groupX_or_O.getSelection().getActionCommand();
+                computer.setSign(player_sign.equals("O") ? "X":"O");
+                // if computer starts
+                if (player_sign.equals("X")) {
+                    computer.makeRandomMove(boardButtons, movesCounter);
+                    ++movesCounter;
+                }
 
             }
         });
@@ -177,7 +182,7 @@ class AppGUI extends JFrame  {
             button.setFocusable(false);
 
             button.setFont(new Font("Arial", Font.BOLD, button.getHeight()));
-            button.setText(actual_sign);
+            button.setText(player_sign);
             ++movesCounter;
             if (gameOver()) return;
             computer.makeRandomMove(boardButtons, movesCounter);
