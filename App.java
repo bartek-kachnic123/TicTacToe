@@ -241,6 +241,32 @@ class AppGUI extends JFrame  {
             }
             checking = "";
         }
+
+        // check diagonals
+        // 1
+        int midPosition = (int) Math.floor(boardButtons.length / 2);
+        checking += boardButtons[0].getText() + boardButtons[midPosition].getText()
+                    + boardButtons[boardButtons.length - 1].getText();
+        if (checking.equals(XWINNER) || checking.equals(OWINNER)) {
+                
+            boardButtons[0].setBackground(Color.GREEN);
+            boardButtons[midPosition].setBackground(Color.GREEN);
+            boardButtons[boardButtons.length - 1].setBackground(Color.GREEN);
+                
+            return true;
+        }
+        // 2
+        checking = "";
+        checking += boardButtons[BOARD_SIZE - 1].getText() + boardButtons[midPosition].getText()
+                    + boardButtons[boardButtons.length - BOARD_SIZE].getText();
+        if (checking.equals(XWINNER) || checking.equals(OWINNER)) {
+
+            boardButtons[BOARD_SIZE - 1].setBackground(Color.GREEN);
+            boardButtons[midPosition].setBackground(Color.GREEN);
+            boardButtons[boardButtons.length - BOARD_SIZE].setBackground(Color.GREEN);
+
+            return true;
+        }
         return false;
     }
 
