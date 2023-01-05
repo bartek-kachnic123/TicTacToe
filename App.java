@@ -109,6 +109,12 @@ class AppGUI extends JFrame  {
         endButton.setPreferredSize(new Dimension(200, 50));
         endButton.setFont(new Font("Arial", Font.PLAIN, 30));
         endButton.setText("Zakoncz");
+        endButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                System.exit(0);
+            }
+        });
         menu.add(endButton);
         
         this.add(menu, BorderLayout.WEST);
