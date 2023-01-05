@@ -1,6 +1,5 @@
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalButtonUI;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +27,7 @@ class AppGUI extends JFrame  {
     JButton newGameButton;
     JButton endButton;
     JButton aboutButton;
+    ButtonGroup groupX_or_O;
     JPanel board;
     BoardButton[] boardButtons;
     String actual_sign;
@@ -41,11 +41,16 @@ class AppGUI extends JFrame  {
         super();
         initalize();
         
-        actual_sign = "O";
-        computer = new Computer("X", Color.BLUE);
+        
+
+        
         
         createMenu();
         createBoard();
+
+        actual_sign = groupX_or_O.getSelection().getActionCommand();
+        
+        computer = new Computer(actual_sign.equals("O") ? "X" : "O", Color.BLUE);
         
         this.pack();
         this.setVisible(true);
@@ -88,6 +93,11 @@ class AppGUI extends JFrame  {
 
                 // new game
                 gameOver = false;
+
+                // set sign X or O
+                actual_sign = groupX_or_O.getSelection().getActionCommand();
+                computer.setSign(actual_sign.equals("O") ? "X":"O");
+
             }
         });
         menu.add(newGameButton);
@@ -117,6 +127,23 @@ class AppGUI extends JFrame  {
         });
         menu.add(endButton);
         
+        JLabel labelX_or_O = new JLabel("Choose O or X");
+        menu.add(labelX_or_O);
+
+        JRadioButton radioButtonO = new JRadioButton("O");
+        radioButtonO.setActionCommand("O");
+
+        JRadioButton radioButtonX = new JRadioButton("X");
+        radioButtonX.setActionCommand("X");
+
+        groupX_or_O = new ButtonGroup();
+        groupX_or_O.add(radioButtonO);
+        groupX_or_O.add(radioButtonX);
+        radioButtonO.setSelected(true);
+
+        menu.add(radioButtonO);
+        menu.add(radioButtonX);
+
         this.add(menu, BorderLayout.WEST);
         
         
@@ -230,6 +257,10 @@ class Computer {
         buttons[randomNumber].setFont(new Font("Arial", Font.BOLD, buttons[randomNumber].getHeight()));
         buttons[randomNumber].setText(sign);
 
+    }
+
+    void setSign(String sign) {
+        this.sign = sign;
     }
 
 
