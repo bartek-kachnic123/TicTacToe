@@ -81,7 +81,7 @@ class AppGUI extends JFrame  {
             @Override
             public void actionPerformed(ActionEvent event) {
                 // reset buttons
-                for (int i=0; i < BOARD_SIZE*BOARD_SIZE; i++)
+                for (int i=0; i < boardButtons.length; i++)
                 {
                     boardButtons[i].setEnabled(true);
                     boardButtons[i].setText(null);
@@ -216,11 +216,11 @@ class AppGUI extends JFrame  {
         // check rows
         for (int i=0; i < BOARD_SIZE; i++) {
             for (int j=0; j < BOARD_SIZE; j++) {
-                checking += this.boardButtons[j+i*BOARD_SIZE].getText();
+                checking += boardButtons[j+i*BOARD_SIZE].getText();
             }
             if (checking.equals(XWINNER) || checking.equals(OWINNER)) {
                 for (int j=0; j< BOARD_SIZE; j++) {
-                    this.boardButtons[j+i*BOARD_SIZE].setBackground(Color.GREEN);
+                    boardButtons[j+i*BOARD_SIZE].setBackground(Color.GREEN);
                 }
                 return true;
             }
@@ -230,12 +230,12 @@ class AppGUI extends JFrame  {
         // check cols
         for (int i=0; i < BOARD_SIZE; i++) {
             for (int j=0; j < BOARD_SIZE; j++) {
-                checking += this.boardButtons[i + j*BOARD_SIZE].getText();
+                checking += boardButtons[i + j*BOARD_SIZE].getText();
             }
 
             if (checking.equals(XWINNER) || checking.equals(OWINNER)) {
                 for (int j=0; j< BOARD_SIZE; j++) {
-                    this.boardButtons[i+j*BOARD_SIZE].setBackground(Color.GREEN);
+                    boardButtons[i+j*BOARD_SIZE].setBackground(Color.GREEN);
                 }
                 return true;
             }
