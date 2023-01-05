@@ -96,6 +96,13 @@ class AppGUI extends JFrame  {
         aboutButton.setPreferredSize(new Dimension(200, 50));
         aboutButton.setFont(new Font("Arial", Font.PLAIN, 30));
         aboutButton.setText("O grze");
+        aboutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                String MESSAGE = "Gra strategiczna rozgrywana przez dwóch graczy.\nGracze obejmują pola na przemian dążąc do objęcia\ntrzech pól w jednej linii, przy jednoczesnym uniemożliwieniu\n tego samego przeciwnikowi.\n Pole może być objęte przez jednego \ngracza i nie zmienia swego właściciela przez cały przebieg gry.";
+                JOptionPane.showMessageDialog(board, MESSAGE, aboutButton.getText(), JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
         menu.add(aboutButton);
 
         endButton = new JButton();
