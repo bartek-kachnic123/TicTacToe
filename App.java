@@ -201,12 +201,15 @@ class AppGUI extends JFrame  {
             button.setFont(new Font("Arial", Font.BOLD, button.getHeight()));
             button.setText(player_sign);
             ++movesCounter;
-            if (gameOver()) return;
+
+            if (movesCounter >= 6)
+                if (gameOver()) return;
+
             computer.makeRandomMove(boardButtons, movesCounter);
             ++movesCounter;
 
-            
-            if (gameOver()) return;
+            if (movesCounter >= 6)
+                gameOver();
     }
     }
     
