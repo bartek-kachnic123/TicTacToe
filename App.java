@@ -34,6 +34,7 @@ class AppGUI extends JFrame  {
     String player_sign;
     int movesCounter;
     Computer computer;
+    boolean player_turn;
     boolean gameOver;
     static {
         BOARD_SIZE = 3;
@@ -66,6 +67,7 @@ class AppGUI extends JFrame  {
         this.setLayout(new BorderLayout());
 
         movesCounter = 0;
+        player_turn = true;
         gameOver = false;
     }
     void createMenu() {
@@ -324,6 +326,69 @@ class Computer {
         buttons[randomNumber].setText(sign);
 
     }
+    private void makeBestMove(BoardButton[] buttons, int movesCounter) { //Newell and Simon's 1972 strategy
+
+        String checking = "";
+        int board_size = (int) Math.sqrt(buttons.length);
+        int indexButton=0;
+        String playerSign = (sign == "O") ?  "X" : "O";
+        
+        // Missing one to win in row
+        for (int i = 0; i < board_size; ++i) {
+
+            // Missing one to win in row
+            for (int j = 0; i < board_size; ++j) {
+                    checking += buttons[j+ i * board_size].getText();
+                    if (buttons[j+i*board_size].getText().isEmpty())
+                        indexButton = j+i*board_size;
+            }
+            if (checking.equals(sign+sign)) { 
+                buttons[indexButton].setText(sign);
+                disableButton(buttons[indexButton]);
+                return;
+            }
+            checking = "";
+            // block oponent row
+            for (int j = 0; i < board_size; ++j) {
+                    checking += buttons[j+ i * board_size].getText();
+                    if (buttons[j+i*board_size].getText().isEmpty())
+                        indexButton = j+i*board_size;
+            }
+            if (checking.equals(playerSign+playerSign)) { 
+                buttons[indexButton].setText(sign);
+                disableButton(buttons[indexButton]);
+                return;
+            }
+            checking = "";
+
+            // Missing one in column
+            for (int j=0; j < board_size; j++) {
+                checking += buttons[i + j*board_size].getText();
+                if (buttons[i + j*board_size].getText().isEmpty())
+                    indexButton = i + j*board_size;
+            }
+
+            if (checking.equals(sign+sign)) {
+                buttons[indexButton].setText(sign);
+                disableButton(buttons[indexButton]);
+            }
+            checking = "";
+            
+        }
+        
+
+    }
+
+    private void disableButton(BoardButton button) {
+
+        button.setEnabled(false, this.signColor);
+        button.setFocusable(false);
+
+        button.setForeground(Color.BLUE);
+        button.setFont(new Font("Arial", Font.BOLD, button.getHeight()));
+        button.setText(sign);
+    }
+
 
     void setSign(String sign) {
         this.sign = sign;
