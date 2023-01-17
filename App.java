@@ -4,24 +4,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
-
-
 public class App {
     public static void main(String[] args) {
-
-
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new AppGUI();
+                new TicTacToe();
             }
         });
-        
-        
     }
 }
-
-
-class AppGUI extends JFrame  {
+class TicTacToe extends JFrame  {
     static final int BOARD_SIZE;
     JPanel menu;
     JButton newGameButton;
@@ -34,29 +26,23 @@ class AppGUI extends JFrame  {
     String player_sign;
     int movesCounter;
     Computer computer;
-    boolean player_turn;
     boolean gameOver;
     static {
         BOARD_SIZE = 3;
     }
     
-    AppGUI() {
+    TicTacToe() {
         super();
         initalize();
-        
-        
-
-        
-        
+    
         createMenu();
         createBoard();
-
+        
         player_sign = groupX_or_O.getSelection().getActionCommand();
-        computer = new Computer(player_sign.equals("O") ? "X" : "O", Color.BLUE);
+        computer = new Computer(player_sign.equals("X") ? "O" : "X", Color.BLUE);
         
         this.pack();
         this.setVisible(true);
-
     }
     void initalize()
     {
@@ -67,9 +53,9 @@ class AppGUI extends JFrame  {
         this.setLayout(new BorderLayout());
 
         movesCounter = 0;
-        player_turn = true;
         gameOver = false;
     }
+
     void createMenu() {
         menu = new JPanel();
         menu.setPreferredSize(new Dimension(200, 500));
@@ -87,7 +73,7 @@ class AppGUI extends JFrame  {
                 for (int i=0; i < boardButtons.length; i++)
                 {
                     boardButtons[i].setEnabled(true);
-                    boardButtons[i].setText(null);
+                    boardButtons[i].setText("");
                     boardButtons[i].setBackground(null); // default color
                 }
 
@@ -100,10 +86,15 @@ class AppGUI extends JFrame  {
                 // set sign X or O
                 player_sign = groupX_or_O.getSelection().getActionCommand();
                 computer.setSign(player_sign.equals("O") ? "X":"O");
+
+                // set diff level
+                computer.setLevel(groupLevel.getSelection().getActionCommand());
+
                 // if computer starts
-                if (player_sign.equals("X")) {
-                    computer.makeRandomMove(boardButtons, movesCounter);
+                if (player_sign.equals("O")) {
+                    computer.makeMove(boardButtons, movesCounter);
                     ++movesCounter;
+                    
                 }
 
             }
@@ -123,19 +114,7 @@ class AppGUI extends JFrame  {
         });
         menu.add(aboutButton);
 
-        endButton = new JButton();
-        endButton.setPreferredSize(new Dimension(200, 50));
-        endButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        endButton.setText("Zakoncz");
-        endButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                System.exit(0);
-            }
-        });
-        menu.add(endButton);
-        
-        JLabel labelX_or_O = new JLabel("Choose O or X");
+        JLabel labelX_or_O = new JLabel("Wybierz X lub O");
         menu.add(labelX_or_O);
 
         JRadioButton radioButtonO = new JRadioButton("O");
@@ -147,19 +126,19 @@ class AppGUI extends JFrame  {
         groupX_or_O = new ButtonGroup();
         groupX_or_O.add(radioButtonO);
         groupX_or_O.add(radioButtonX);
-        radioButtonO.setSelected(true);
+        radioButtonX.setSelected(true);
 
-        menu.add(radioButtonO);
         menu.add(radioButtonX);
+        menu.add(radioButtonO);
 
-        JLabel labelLevel = new JLabel("Choose level difficulty!");
+        JLabel labelLevel = new JLabel("Wybierz poziom trudności");
         menu.add(labelLevel);
 
-        JRadioButton radioLevelNormal = new JRadioButton("Normal");
+        JRadioButton radioLevelNormal = new JRadioButton("Normalny");
         radioLevelNormal.setActionCommand("Normal");
         
-        JRadioButton radioLevelImpossible = new JRadioButton("Impossible");
-        radioLevelNormal.setActionCommand("Impossible");
+        JRadioButton radioLevelImpossible = new JRadioButton("Niemożliwy");
+        radioLevelImpossible.setActionCommand("Impossible");
 
         groupLevel = new ButtonGroup();
         groupLevel.add(radioLevelNormal);
@@ -168,11 +147,22 @@ class AppGUI extends JFrame  {
 
         menu.add(radioLevelNormal);
         menu.add(radioLevelImpossible);
+
+        endButton = new JButton();
+        endButton.setPreferredSize(new Dimension(200, 50));
+        endButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        endButton.setText("Zakoncz");
+        endButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                System.exit(0);
+            }
+        });
+        menu.add(endButton, BorderLayout.SOUTH);
+
         this.add(menu, BorderLayout.WEST);
-        
-        
-        
     }
+
     void createBoard() {
 
         board = new JPanel();
@@ -204,13 +194,13 @@ class AppGUI extends JFrame  {
             button.setText(player_sign);
             ++movesCounter;
 
-            if (movesCounter >= 6)
+            if (movesCounter >= 5) // min moves to win
                 if (gameOver()) return;
 
-            computer.makeRandomMove(boardButtons, movesCounter);
+            computer.makeMove(boardButtons, movesCounter);
             ++movesCounter;
 
-            if (movesCounter >= 6)
+            if (movesCounter >= 5)
                 gameOver();
     }
     }
@@ -292,22 +282,25 @@ class AppGUI extends JFrame  {
         return false;
     }
 
-
-    
-
-
 }
 
 class Computer {
     String sign;
     Color signColor;
+    String diffLevel;
 
     public Computer(String sign, Color signColor) {
         this.sign = sign;
         this.signColor = signColor;
-
+        this.diffLevel = "Normal";
     }
 
+    void makeMove(BoardButton[] buttons, int movesCounter) {
+        if (diffLevel.equals("Normal"))
+            makeRandomMove(buttons, movesCounter);
+        else if (diffLevel.equals("Impossible"))
+            makeBestMove(buttons, movesCounter);
+    }
     void makeRandomMove(BoardButton[] buttons, int movesCounter) {
         Random random = new Random();
         int randomNumber;
@@ -317,27 +310,26 @@ class Computer {
             if (movesCounter >= buttons.length) return;
         }while(!buttons[randomNumber].isEnabled());
 
-
-        buttons[randomNumber].setEnabled(false, this.signColor);
-        buttons[randomNumber].setFocusable(false);
-
-        buttons[randomNumber].setForeground(Color.BLUE);
-        buttons[randomNumber].setFont(new Font("Arial", Font.BOLD, buttons[randomNumber].getHeight()));
-        buttons[randomNumber].setText(sign);
-
+        disableButton(buttons[randomNumber]);
     }
-    private void makeBestMove(BoardButton[] buttons, int movesCounter) { //Newell and Simon's 1972 strategy
+
+    void makeBestMove(BoardButton[] buttons, int movesCounter) { 
 
         String checking = "";
         int board_size = (int) Math.sqrt(buttons.length);
         int indexButton=0;
         String playerSign = (sign == "O") ?  "X" : "O";
-        
-        // Missing one to win in row
+
+        // first move will be random
+        if (movesCounter == 0) {
+            makeRandomMove(buttons, movesCounter);
+            return;
+        }
+
         for (int i = 0; i < board_size; ++i) {
 
             // Missing one to win in row
-            for (int j = 0; i < board_size; ++j) {
+            for (int j = 0; j < board_size; ++j) {
                     checking += buttons[j+ i * board_size].getText();
                     if (buttons[j+i*board_size].getText().isEmpty())
                         indexButton = j+i*board_size;
@@ -348,20 +340,8 @@ class Computer {
                 return;
             }
             checking = "";
-            // block oponent row
-            for (int j = 0; i < board_size; ++j) {
-                    checking += buttons[j+ i * board_size].getText();
-                    if (buttons[j+i*board_size].getText().isEmpty())
-                        indexButton = j+i*board_size;
-            }
-            if (checking.equals(playerSign+playerSign)) { 
-                buttons[indexButton].setText(sign);
-                disableButton(buttons[indexButton]);
-                return;
-            }
-            checking = "";
-
-            // Missing one in column
+            
+            // Missing one to win in column
             for (int j=0; j < board_size; j++) {
                 checking += buttons[i + j*board_size].getText();
                 if (buttons[i + j*board_size].getText().isEmpty())
@@ -371,12 +351,96 @@ class Computer {
             if (checking.equals(sign+sign)) {
                 buttons[indexButton].setText(sign);
                 disableButton(buttons[indexButton]);
+                return;
             }
             checking = "";
             
+            
+        }
+        for (int i = 0; i < board_size; ++i) {
+            // block oponent row
+            for (int j = 0; j < board_size; ++j) {
+                checking += buttons[j+ i * board_size].getText();
+                if (buttons[j+i*board_size].getText().isEmpty())
+                    indexButton = j+i*board_size;
+            }
+            if (checking.equals(playerSign+playerSign)) { 
+                buttons[indexButton].setText(sign);
+                disableButton(buttons[indexButton]);
+                return;
+                }
+            checking = "";
+
+            
+              // block col oponnent
+            for (int j=0; j < board_size; j++) {
+                checking += buttons[i + j*board_size].getText();
+                if (buttons[i + j*board_size].getText().isEmpty())
+                    indexButton = i + j*board_size;
+                }
+
+            if (checking.equals(playerSign+playerSign)) {
+                buttons[indexButton].setText(sign);
+                disableButton(buttons[indexButton]);
+                return;
+            }
+            checking = "";
+
+        }
+        // mark mid if you can
+        int mid = (int) Math.floor(buttons.length / 2);
+        if (buttons[mid].isEnabled()) {
+            buttons[mid].setText(sign);
+            disableButton(buttons[mid]);
+            return;
+        }
+        // check corners:
+        if (buttons[0].getText().equals(playerSign) && buttons[buttons.length-1].isEnabled()) {
+            buttons[buttons.length-1].setText(sign);
+            disableButton(buttons[buttons.length-1]);
+            return;
+        }
+
+        if (buttons[0].isEnabled() && buttons[buttons.length-1].getText().equals(playerSign)) {
+            buttons[0].setText(sign);
+            disableButton(buttons[0]);
+            return;
         }
         
+        if (buttons[board_size-1].getText().equals(playerSign) && buttons[buttons.length-board_size].isEnabled()) {
+            buttons[buttons.length-board_size].setText(sign);
+            disableButton(buttons[buttons.length-board_size]);
+            return;
+        }
 
+        if (buttons[board_size-1].isEnabled() && buttons[buttons.length-board_size].getText().equals(playerSign)) {
+            buttons[board_size-1].setText(sign);
+            disableButton(buttons[board_size-1]);
+            return;
+        }
+
+        if (buttons[0].isEnabled()) {
+            buttons[0].setText(sign);
+            disableButton(buttons[0]);
+            return;
+        }
+        if (buttons[buttons.length-1].isEnabled()) {
+            buttons[buttons.length-1].setText(sign);
+            disableButton(buttons[buttons.length-1]);
+            return;
+        }
+        if (buttons[board_size-1].isEnabled()) {
+            buttons[board_size-1].setText(sign);
+            disableButton(buttons[board_size-1]);
+            return;
+        }
+        if (buttons[buttons.length-board_size].isEnabled()) {
+            buttons[buttons.length-board_size].setText(sign);
+            disableButton(buttons[buttons.length-board_size]);
+            return;
+        }
+
+        makeRandomMove(buttons, movesCounter);
     }
 
     private void disableButton(BoardButton button) {
@@ -389,11 +453,13 @@ class Computer {
         button.setText(sign);
     }
 
-
     void setSign(String sign) {
         this.sign = sign;
     }
 
+    void setLevel(String diffLevel) {
+        this.diffLevel = diffLevel;
+    }
 
 }
 
@@ -401,6 +467,7 @@ class BoardButton extends JButton {
     
     public BoardButton() {
         super();
+        this.setText("");
     }
     void setEnabled(boolean enabled, Color fontColor) {
         super.setEnabled(enabled);
